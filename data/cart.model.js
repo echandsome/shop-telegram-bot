@@ -10,6 +10,18 @@ const CartSchema = new mongoose.Schema({
       unique: true
     },
     items: [CartItemSchema],
+    discountCode: {
+      type: String,
+      default: null
+    },
+    discountAmount: {
+      type: Number,
+      default: 0
+    },
+    finalPrice: {
+      type: Number,
+      default: 0
+    },
     createdAt: {
       type: Date,
       default: Date.now

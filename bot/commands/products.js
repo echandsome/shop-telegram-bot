@@ -1,14 +1,13 @@
-const { menuOptions, products } = require('../keyboards');
 const logger = require('../../utils/log');
+const { products } = require('../keyboards');
 
-module.exports = async (msg, bot) => {
-    const chatId = msg.chat.id;
+module.exports = async (chatId, text, bot) => {
 
     try {
-        await bot.sendMessage(chatId, "Please select a category from the list:", {
+        bot.sendMessage(chatId, `${text} (In stock: Unlimited)`, {
             parse_mode: 'HTML',
             reply_markup: {
-              inline_keyboard: products
+              inline_keyboard: products[text]
             }
         });
     } catch (e) {

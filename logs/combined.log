@@ -17,3 +17,8 @@
 [2025-04-11 08:29:59] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object
 [2025-04-11 08:30:40] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object
 [2025-04-11 08:31:06] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object
+[2025-04-11 08:41:50] ERROR - [bot\commands\checkout.js:8] bot is not defined
+[2025-04-11 08:42:19] ERROR - [bot\commands\checkout.js:8] bot is not defined
+[2025-04-11 09:42:44] ERROR - [services\order.js:17] Error creating order: Cart is empty
+[2025-04-11 09:43:52] ERROR - [services\order.js:17] Error creating order: Cart is empty
+[2025-04-11 10:04:25] ERROR - [bot\commands\checkout.js:21] messageId is not defined

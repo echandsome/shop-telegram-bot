@@ -1,22 +1,27 @@
 const { 
   startCommand, 
-  productsCommand, 
+  categoriesCommand, 
+  productsCommand,
   cartCommand, 
   profileCommand, 
   reviewsCommand, 
   supportCommand, 
   pgpkeyCommand,
   productsDetailCommand,
-  subproductsCommand,
-  addToCartCommand } = require('./commands');
-const { products_detail, subproducts } = require('./keyboards');
+  addToCartCommand,
+  checkoutCommand,
+  paymentsCommand,
+  shippingCommand
+} = require('./commands');
+const { products_detail, products } = require('./keyboards');
+const { getUserById } = require('../services/user');
 
 module.exports = {
   handleCommands: (bot) => {
     // Handle /start command
     bot.onText(/\/start/, (msg) => startCommand(msg, bot));
 
-    bot.onText(/\/products/, (msg) => productsCommand(msg, bot));
+    bot.onText(/\/products/, (msg) => categoriesCommand(msg, bot));
     bot.onText(/\/cart/, (msg) => cartCommand(msg, bot));
     bot.onText(/\/profile/, (msg) => profileCommand(msg, bot));
     bot.onText(/\/reviews/, (msg) => reviewsCommand(msg, bot));
@@ -32,21 +37,35 @@ module.exports = {
       console.log(text)
       if (products_detail[text]) {
         productsDetailCommand (chatId, text, bot);
-      } else if (subproducts[text]) {
-        subproductsCommand(chatId, text, bot);
+      } else if (products[text]) {
+        productsCommand(chatId, text, bot);
       } else if (text.startsWith('add_')) {
         addToCartCommand(chatId, text, bot)
       } else if (text == 'cart') {
-        cartCommand(message, bot);
+        cartCommand(message, bot, false);
+      } else if (text == 'checkout') {
+        checkoutCommand(message, bot, 'checkout', text, query);
+      } else if (text == 'enter_discount') {
+        checkoutCommand(message, bot, 'enter_discount', text, query);
+      } else if (text == 'discount') {
+        checkoutCommand(message, bot, 'discount', text, query);
+      } else if (text === '2-5 Business Days $0.00🚚') {
+        shippingCommand(chatId, text, bot);
+      } else if (text.startsWith('payment_')) {
+        paymentsCommand(chatId, text, bot, 'payment', query);
+      } else if (text.startsWith('confirm_payment_')) {
+        paymentsCommand(chatId, text, bot, 'confirm_payment', query);
       }
     });
 
-    bot.on('message', (msg) => {
+    bot.on('message', async (msg) => {
       const chatId = msg.chat.id;
       const text = msg.text;
 
+      const user = await getUserById(chatId);
+
       if (text == '🚀Products') {
-        productsCommand(msg, bot);
+        categoriesCommand(msg, bot);
       } else if (text == '🛒Cart') {
         cartCommand(msg, bot);
       } else if (text == '👤My Profile') {
@@ -57,6 +76,8 @@ module.exports = {
         supportCommand(msg, bot);
       } else if (text == '🔒PGP Key') {
         pgpkeyCommand(msg, bot);
+      } else if (user && user.awaitingDiscount && msg.text) {
+        checkoutCommand(msg, bot, 'input_discount', text);
       }
     })
   }

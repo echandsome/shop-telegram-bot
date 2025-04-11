@@ -1,4 +1,5 @@
 const { Cart } = require('../data');
+const { getDiscountRate } = require('./discount');
 
 /**
  * Add a product to the user's cart
@@ -8,19 +9,20 @@ const { Cart } = require('../data');
  */
 const addToCart = async (userId, product) => {
   try {
-    let quantity = 1; // Default to 1
+    let quantityNumeric = 1; // Default to 1
     if (typeof product.quantity === 'string') {
       const match = product.quantity.match(/^(\d+\.?\d*)/);
       if (match && match[1]) {
-        quantity = parseFloat(match[1]);
+        quantityNumeric = parseFloat(match[1]);
       }
     } else if (typeof product.quantity === 'number') {
-      quantity = product.quantity;
+      quantityNumeric = product.quantity;
     }
 
     const productToSave = {
       ...product,
-      quantity: quantity
+      quantityNumeric: quantityNumeric,
+      quantityDisplay: product.quantity
     };
 
     // Check if the product already exists in the cart
@@ -29,24 +31,26 @@ const addToCart = async (userId, product) => {
       'items.product': product.product
     });
 
+    let result;
     if (existingCart) {
       // Update existing product in cart
-      return await Cart.updateOne(
+      result = await Cart.updateOne(
         {
           userId: userId,
           'items.product': product.product
         },
         {
-          $inc: { 'items.$.quantity': parseInt(quantity) }, // Increment quantity
+          $inc: { 'items.$.quantityNumeric': quantityNumeric }, // Increment numeric quantity
           $set: {
             'items.$.price': product.price,
+            'items.$.quantityDisplay': product.quantity, // Keep display value updated too
             updatedAt: new Date()
           }
         }
       );
     } else {
       // Add new product to cart
-      return await Cart.findOneAndUpdate(
+      result = await Cart.findOneAndUpdate(
         { userId: userId },
         {
           $push: { items: productToSave },
@@ -56,8 +60,65 @@ const addToCart = async (userId, product) => {
         { upsert: true, new: true }
       );
     }
+
+    // Recalculate cart totals if a discount is applied
+    const cart = await Cart.findOne({ userId });
+    if (cart && cart.discountCode) {
+      await updateCartTotals(userId);
+    }
+
+    return result;
   } catch (error) {
     console.error('Error adding to cart:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update cart totals (recalculate prices with discount)
+ * @param {Number} userId - User ID (chat ID)
+ * @returns {Promise} - Result of the database operation
+ */
+const updateCartTotals = async (userId) => {
+  try {
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart || !cart.items || cart.items.length === 0) {
+      return null;
+    }
+
+    // Calculate total price
+    let totalPrice = 0;
+    cart.items.forEach(item => {
+      totalPrice += item.price * (item.quantityNumeric || 1);
+    });
+
+    // Apply discount if there is one
+    let finalPrice = totalPrice;
+    let discountAmount = 0;
+
+    if (cart.discountCode) {
+      const discountRate = getDiscountRate(cart.discountCode);
+      if (discountRate) {
+        discountAmount = totalPrice * discountRate;
+        finalPrice = totalPrice - discountAmount;
+      }
+    }
+
+    // Update the cart with the new totals
+    return await Cart.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          discountAmount: discountAmount,
+          finalPrice: finalPrice,
+          updatedAt: new Date()
+        }
+      },
+      { new: true }
+    );
+  } catch (error) {
+    console.error('Error updating cart totals:', error);
     throw error;
   }
 };
@@ -69,7 +130,14 @@ const addToCart = async (userId, product) => {
  */
 const getCart = async (userId) => {
   try {
-    return await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId });
+
+    // If cart has items but no finalPrice, calculate it
+    if (cart && cart.items && cart.items.length > 0 && !cart.finalPrice) {
+      return await updateCartTotals(userId);
+    }
+
+    return cart;
   } catch (error) {
     console.error('Error getting cart:', error);
     throw error;
@@ -85,7 +153,15 @@ const clearCart = async (userId) => {
   try {
     return await Cart.updateOne(
       { userId },
-      { $set: { items: [], updatedAt: new Date() } }
+      {
+        $set: {
+          items: [],
+          discountCode: null,
+          discountAmount: 0,
+          finalPrice: 0,
+          updatedAt: new Date()
+        }
+      }
     );
   } catch (error) {
     console.error('Error clearing cart:', error);
@@ -101,15 +177,61 @@ const clearCart = async (userId) => {
  */
 const removeFromCart = async (userId, productId) => {
   try {
-    return await Cart.updateOne(
+    // Remove the item
+    await Cart.updateOne(
       { userId },
-      { 
+      {
         $pull: { items: { product: productId } },
         $set: { updatedAt: new Date() }
       }
     );
+
+    // Recalculate cart totals
+    return await updateCartTotals(userId);
   } catch (error) {
     console.error('Error removing from cart:', error);
+    throw error;
+  }
+};
+
+/**
+ * Calculate cart summary (items count, subtotal, discount, total)
+ * @param {Number} userId - User ID (chat ID)
+ * @returns {Promise<Object>} - Cart summary object
+ */
+const getCartSummary = async (userId) => {
+  try {
+    const cart = await getCart(userId);
+
+    if (!cart || !cart.items || cart.items.length === 0) {
+      return {
+        itemsCount: 0,
+        subtotal: 0,
+        discount: 0,
+        total: 0,
+        discountCode: null
+      };
+    }
+
+    // Count items
+    const itemsCount = cart.items.reduce((total, item) => total + (item.quantityNumeric || 1), 0);
+
+    // Calculate subtotal
+    const subtotal = cart.items.reduce((total, item) => total + (item.price * (item.quantityNumeric || 1)), 0);
+
+    // Get discount and total
+    const discount = cart.discountAmount || 0;
+    const total = cart.finalPrice || subtotal;
+
+    return {
+      itemsCount,
+      subtotal,
+      discount,
+      total,
+      discountCode: cart.discountCode
+    };
+  } catch (error) {
+    console.error('Error getting cart summary:', error);
     throw error;
   }
 };
@@ -118,5 +240,7 @@ module.exports = {
   addToCart,
   getCart,
   clearCart,
-  removeFromCart
+  removeFromCart,
+  updateCartTotals,
+  getCartSummary
 };

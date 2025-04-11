@@ -8,6 +8,11 @@ const OrderSchema = new mongoose.Schema({
       type: Number,
       required: true
     },
+    orderNumber: {
+      type: String,
+      required: true,
+      unique: true
+    },
     items: [CartItemSchema],
     status: {
       type: String,
@@ -22,7 +27,24 @@ const OrderSchema = new mongoose.Schema({
       type: Number,
       required: true
     },
+    originalAmount: {
+      type: Number
+    },
+    discountCode: {
+      type: String
+    },
+    discountAmount: {
+      type: Number,
+      default: 0
+    },
+    paymentAddress: {
+      type: String
+    },
     createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
       type: Date,
       default: Date.now
     }

@@ -1,5 +1,5 @@
-const { menuOptions, products } = require('../keyboards');
-const productCommand = require('./products');
+const { menuOptions } = require('../keyboards');
+const productCommand = require('./categories');
 const { upsertUser } = require('../../services/user');
 const logger = require('../../utils/log');
 

@@ -37,6 +37,72 @@ const upsertUser = async (msg, chatId) => {
   }
 };
 
+/**
+ * Set the awaitingDiscount flag for a user
+ * @param {Number} userId - User ID (chat ID)
+ * @param {Boolean} value - Value to set (true/false)
+ * @returns {Promise<Object>} - The updated user document
+ */
+const setAwaitingDiscount = async (userId, value = true) => {
+  try {
+    return await User.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          awaitingDiscount: value,
+          updatedAt: new Date()
+        }
+      },
+      { new: true }
+    );
+  } catch (error) {
+    console.error('Error setting awaitingDiscount:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get a user by their userId
+ * @param {Number} userId - User ID (chat ID)
+ * @returns {Promise<Object>} - The user document
+ */
+const getUserById = async (userId) => {
+  try {
+    return await User.findOne({ userId });
+  } catch (error) {
+    console.error('Error getting user by ID:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update a user's state
+ * @param {Number} userId - User ID (chat ID)
+ * @param {String} state - New state
+ * @returns {Promise<Object>} - The updated user document
+ */
+const updateUserState = async (userId, state) => {
+  try {
+    return await User.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          state,
+          lastActive: new Date(),
+          updatedAt: new Date()
+        }
+      },
+      { new: true }
+    );
+  } catch (error) {
+    console.error('Error updating user state:', error);
+    throw error;
+  }
+};
+
 module.exports = {
-  upsertUser
+  upsertUser,
+  setAwaitingDiscount,
+  getUserById,
+  updateUserState
 };

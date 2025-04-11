@@ -7,6 +7,6 @@ module.exports = async (msg, bot) => {
         // TODO: show PGP public key
     } catch (e) {
         logger.error(e);
-        await bot.sendMessage(chatId, "Sorry, there was an error loading the PGP key.");
+        await bot.sendMessage(chatId, "Sorry, there was an error loading the Support.");
     }
 }
