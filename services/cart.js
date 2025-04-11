@@ -9,20 +9,20 @@ const { getDiscountRate } = require('./discount');
  */
 const addToCart = async (userId, product) => {
   try {
-    let quantityNumeric = 1; // Default to 1
+    
+    let quantity = 1; // Default to 1
     if (typeof product.quantity === 'string') {
       const match = product.quantity.match(/^(\d+\.?\d*)/);
       if (match && match[1]) {
-        quantityNumeric = parseFloat(match[1]);
+        quantity = parseFloat(match[1]);
       }
     } else if (typeof product.quantity === 'number') {
-      quantityNumeric = product.quantity;
+      quantity = product.quantity;
     }
 
     const productToSave = {
       ...product,
-      quantityNumeric: quantityNumeric,
-      quantityDisplay: product.quantity
+      quantity: quantity,
     };
 
     // Check if the product already exists in the cart
@@ -40,10 +40,9 @@ const addToCart = async (userId, product) => {
           'items.product': product.product
         },
         {
-          $inc: { 'items.$.quantityNumeric': quantityNumeric }, // Increment numeric quantity
+          $inc: { 'items.$.quantity': quantity }, // Increment numeric quantity
           $set: {
             'items.$.price': product.price,
-            'items.$.quantityDisplay': product.quantity, // Keep display value updated too
             updatedAt: new Date()
           }
         }
@@ -90,7 +89,7 @@ const updateCartTotals = async (userId) => {
     // Calculate total price
     let totalPrice = 0;
     cart.items.forEach(item => {
-      totalPrice += item.price * (item.quantityNumeric || 1);
+      totalPrice += item.price * (item.quantity || 1);
     });
 
     // Apply discount if there is one
@@ -214,10 +213,10 @@ const getCartSummary = async (userId) => {
     }
 
     // Count items
-    const itemsCount = cart.items.reduce((total, item) => total + (item.quantityNumeric || 1), 0);
+    const itemsCount = cart.items.reduce((total, item) => total + (item.quantity || 1), 0);
 
     // Calculate subtotal
-    const subtotal = cart.items.reduce((total, item) => total + (item.price * (item.quantityNumeric || 1)), 0);
+    const subtotal = cart.items.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
 
     // Get discount and total
     const discount = cart.discountAmount || 0;

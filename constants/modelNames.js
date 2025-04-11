@@ -4,4 +4,5 @@ module.exports = {
     PRODUCT: 'Products',
     ORDER: 'Orders',
     CART: 'Carts',
+    SUPPORT_MESSAGE: 'SupportMessages',
 };

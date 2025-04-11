@@ -7,10 +7,10 @@ const reviewsCommand = require('./reviews');
 const supportCommand = require('./support');
 const pgpkeyCommand = require('./pgpkey');
 const productsDetailCommand = require('./productsDetail');
-const addToCartCommand = require('./addToCart');
 const checkoutCommand = require('./checkout');
 const paymentsCommand = require('./payments');
 const shippingCommand = require('./shipping');
+const menuCommand = require('./menu');
 
 module.exports = {
     startCommand,
@@ -22,9 +22,9 @@ module.exports = {
     supportCommand,
     pgpkeyCommand,
     productsDetailCommand,
-    addToCartCommand,
     checkoutCommand,
     paymentsCommand,
-    shippingCommand
+    shippingCommand,
+    menuCommand
   };
   

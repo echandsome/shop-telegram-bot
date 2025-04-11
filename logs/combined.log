@@ -22,3 +22,34 @@
 [2025-04-11 09:42:44] ERROR - [services\order.js:17] Error creating order: Cart is empty
 [2025-04-11 09:43:52] ERROR - [services\order.js:17] Error creating order: Cart is empty
 [2025-04-11 10:04:25] ERROR - [bot\commands\checkout.js:21] messageId is not defined
+[2025-04-11 11:57:34] ERROR - [unknown] Cast to embedded failed for value "{
+  product: 'add',
+  quantity: '28g',
+  price: 1550,
+  addedAt: 2025-04-11T15:57:34.603Z,
+  quantityNumeric: 28,
+  quantityDisplay: '28g'
+}" (type Object) at path "items" because of "CastError"
+[2025-04-11 11:58:29] ERROR - [unknown] Cast to embedded failed for value "{
+  product: 'add',
+  quantity: '28g',
+  price: 1550,
+  addedAt: 2025-04-11T15:58:29.380Z,
+  quantityNumeric: 28,
+  quantityDisplay: '28g'
+}" (type Object) at path "items" because of "CastError"
+[2025-04-11 12:03:14] ERROR - [node_modules\mongoose\lib\schema\number.js:381] Cast to Number failed for value "3.5g" (type string) at path "quantity"
+[2025-04-11 12:04:47] ERROR - [node_modules\mongoose\lib\schema\number.js:381] Cast to Number failed for value "56g" (type string) at path "quantity"
+[2025-04-11 12:26:39] ERROR - [bot\commands\cart.js:113] messageId is not defined
+[2025-04-11 12:27:47] ERROR - [bot\commands\cart.js:96] message is not defined
+[2025-04-11 12:28:07] ERROR - [bot\commands\cart.js:126] menuOptions is not defined
+[2025-04-11 12:29:07] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+[2025-04-11 12:29:28] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object
+[2025-04-11 12:29:57] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+[2025-04-11 12:30:37] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+[2025-04-11 12:31:01] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
+[2025-04-11 12:57:13] ERROR - [bot\commands\profile.js:31] Cannot read properties of undefined (reading 'toFixed')
+[2025-04-11 12:57:44] ERROR - [bot\commands\profile.js:27] order is not defined
+[2025-04-11 12:57:54] ERROR - [bot\commands\profile.js:27] order is not defined
+[2025-04-11 12:58:16] ERROR - [bot\commands\profile.js:33] Cannot read properties of undefined (reading 'toFixed')
+[2025-04-11 12:59:25] ERROR - [bot\commands\profile.js:33] Cannot read properties of undefined (reading 'toFixed')

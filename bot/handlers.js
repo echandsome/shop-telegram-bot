@@ -1,17 +1,17 @@
-const { 
-  startCommand, 
-  categoriesCommand, 
+const {
+  startCommand,
+  categoriesCommand,
   productsCommand,
-  cartCommand, 
-  profileCommand, 
-  reviewsCommand, 
-  supportCommand, 
+  cartCommand,
+  profileCommand,
+  reviewsCommand,
+  supportCommand,
   pgpkeyCommand,
   productsDetailCommand,
-  addToCartCommand,
   checkoutCommand,
   paymentsCommand,
-  shippingCommand
+  shippingCommand,
+  menuCommand
 } = require('./commands');
 const { products_detail, products } = require('./keyboards');
 const { getUserById } = require('../services/user');
@@ -22,7 +22,7 @@ module.exports = {
     bot.onText(/\/start/, (msg) => startCommand(msg, bot));
 
     bot.onText(/\/products/, (msg) => categoriesCommand(msg, bot));
-    bot.onText(/\/cart/, (msg) => cartCommand(msg, bot));
+    bot.onText(/\/cart/, (msg) => cartCommand(msg, bot, 'cart'));
     bot.onText(/\/profile/, (msg) => profileCommand(msg, bot));
     bot.onText(/\/reviews/, (msg) => reviewsCommand(msg, bot));
     bot.onText(/\/support/, (msg) => supportCommand(msg, bot));
@@ -40,9 +40,11 @@ module.exports = {
       } else if (products[text]) {
         productsCommand(chatId, text, bot);
       } else if (text.startsWith('add_')) {
-        addToCartCommand(chatId, text, bot)
+        cartCommand(message, bot, 'add_to_cart', text, query)
       } else if (text == 'cart') {
-        cartCommand(message, bot, false);
+        cartCommand(message, bot, '_cart', text, query);
+      } else if (text.startsWith('remove_item_')) {
+        cartCommand(message, bot, 'remove_item', text, query);
       } else if (text == 'checkout') {
         checkoutCommand(message, bot, 'checkout', text, query);
       } else if (text == 'enter_discount') {
@@ -55,6 +57,10 @@ module.exports = {
         paymentsCommand(chatId, text, bot, 'payment', query);
       } else if (text.startsWith('confirm_payment_')) {
         paymentsCommand(chatId, text, bot, 'confirm_payment', query);
+      } else if (text == 'back') {
+        bot.deleteMessage(chatId, messageId);
+      } else if (text == 'menu') {
+        menuCommand(message, bot);
       }
     });
 
@@ -67,7 +73,7 @@ module.exports = {
       if (text == '🚀Products') {
         categoriesCommand(msg, bot);
       } else if (text == '🛒Cart') {
-        cartCommand(msg, bot);
+        cartCommand(msg, bot, 'cart');
       } else if (text == '👤My Profile') {
         profileCommand(msg, bot);
       } else if (text == '⭐️Reviews') {
@@ -76,6 +82,13 @@ module.exports = {
         supportCommand(msg, bot);
       } else if (text == '🔒PGP Key') {
         pgpkeyCommand(msg, bot);
+      } else if (text == 'Clear Chat History') {
+        supportCommand(msg, bot, 'clear');
+      } else if (text == 'Close Chat') {
+        supportCommand(msg, bot, 'close');
+      } else if (user && user.state === 'in_support_chat' && msg.text) {
+        // Handle messages in support chat
+        supportCommand(msg, bot, 'message', text);
       } else if (user && user.awaitingDiscount && msg.text) {
         checkoutCommand(msg, bot, 'input_discount', text);
       }

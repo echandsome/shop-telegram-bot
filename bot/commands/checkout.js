@@ -48,7 +48,7 @@ module.exports = async (msg, bot, type, text, query) => {
         } else if (type === 'input_discount') {
             // Reset the awaitingDiscount flag
             await setAwaitingDiscount(chatId, false);
-          
+
             const result = await applyDiscount(chatId, msg.text);
         
             if (result.success) {
@@ -94,7 +94,6 @@ module.exports = async (msg, bot, type, text, query) => {
                 });
             }
         }
-
     } catch (e) {
         logger.error(e);
         await bot.sendMessage(chatId, "Sorry, there was an error loading the Checkout.");
