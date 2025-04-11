@@ -15,3 +15,7 @@
 [2025-04-11 08:00:35] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot apply $inc to a value of non-numeric type. {_id: ObjectId('67f904000abdec98b0430ddf')} has the field 'quantity' of non-numeric type string
 [2025-04-11 08:01:57] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot apply $inc to a value of non-numeric type. {_id: ObjectId('67f904000abdec98b0430ddf')} has the field 'quantity' of non-numeric type string
 [2025-04-11 08:03:03] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot apply $inc to a value of non-numeric type. {_id: ObjectId('67f904000abdec98b0430ddf')} has the field 'quantity' of non-numeric type string
+[2025-04-11 08:28:54] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object
+[2025-04-11 08:29:59] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object
+[2025-04-11 08:30:40] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object
+[2025-04-11 08:31:06] ERROR - [node_modules\node-telegram-bot-api\src\telegram.js:316] ETELEGRAM: 400 Bad Request: can't parse inline keyboard button: InlineKeyboardButton must be an Object

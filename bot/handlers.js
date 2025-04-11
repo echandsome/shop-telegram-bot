@@ -36,6 +36,8 @@ module.exports = {
         subproductsCommand(chatId, text, bot);
       } else if (text.startsWith('add_')) {
         addToCartCommand(chatId, text, bot)
+      } else if (text == 'cart') {
+        cartCommand(message, bot);
       }
     });
 

@@ -13,6 +13,14 @@ const menuOptions = [
     ]
 ];
 
+const carts = [
+  [ { text: 'Checkout', callback_data: 'checkout' } ],
+  [
+    { text: '🤑I have discount code', callback_data: 'enter_discount' },
+    { text: 'Menu', callback_data: 'menu' }
+  ]
+]
+
 const products = [
   [ { text: 'Hydroxide', callback_data: 'Hydroxide' } ],
   [ { text: 'Ammonia', callback_data: 'Ammonia' } ],
@@ -77,4 +85,4 @@ const subproducts = {
   "Self-Reactive": baseSubproductOptions
 };
 
-module.exports = { menuOptions, products, products_detail, subproducts };
+module.exports = { menuOptions, carts, products, products_detail, subproducts };
