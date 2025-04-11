@@ -1,0 +1,18 @@
+{
+  "name": "shop-telegram",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "mongoose": "^8.13.2",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
