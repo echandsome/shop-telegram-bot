@@ -7,3 +7,9 @@
 [2025-04-11 00:30:54] ERROR - [bot\commands.js:24] productCommand is not defined
 [2025-04-11 00:31:08] ERROR - [bot\commands.js:24] productCommand is not defined
 [2025-04-11 00:56:09] ERROR - [bot\commands\start.js:20] productCommand is not defined
+[2025-04-11 07:59:31] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot increment with non-numeric argument: {items.$.quantity: "56"}
+[2025-04-11 08:00:00] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot increment with non-numeric argument: {items.$.quantity: "14"}
+[2025-04-11 08:00:22] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot apply $inc to a value of non-numeric type. {_id: ObjectId('67f904000abdec98b0430ddf')} has the field 'quantity' of non-numeric type string
+[2025-04-11 08:00:35] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot apply $inc to a value of non-numeric type. {_id: ObjectId('67f904000abdec98b0430ddf')} has the field 'quantity' of non-numeric type string
+[2025-04-11 08:01:57] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot apply $inc to a value of non-numeric type. {_id: ObjectId('67f904000abdec98b0430ddf')} has the field 'quantity' of non-numeric type string
+[2025-04-11 08:03:03] ERROR - [node_modules\mongodb\lib\operations\update.js:75] Cannot apply $inc to a value of non-numeric type. {_id: ObjectId('67f904000abdec98b0430ddf')} has the field 'quantity' of non-numeric type string

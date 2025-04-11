@@ -32,6 +32,7 @@ const upsertUser = async (msg, chatId) => {
 
     return result;
   } catch (error) {
+    console.error('Error upserting user:', error);
     throw error;
   }
 };

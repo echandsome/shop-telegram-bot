@@ -5,9 +5,9 @@ const profileCommand = require('./profile');
 const reviewsCommand = require('./reviews');
 const supportCommand = require('./support');
 const pgpkeyCommand = require('./pgpkey');
-const productsDetailCommand = require('./products-detail');
+const productsDetailCommand = require('./productsDetail');
 const subproductsCommand = require('./subproducts');
-const addToCartCommand = require('./add-to-cart');
+const addToCartCommand = require('./addToCart');
 
 module.exports = {
     startCommand,

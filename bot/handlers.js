@@ -1,9 +1,9 @@
 const { 
   startCommand, 
-  productCommand, 
+  productsCommand, 
   cartCommand, 
   profileCommand, 
-  reviewCommand, 
+  reviewsCommand, 
   supportCommand, 
   pgpkeyCommand,
   productsDetailCommand,
@@ -16,10 +16,10 @@ module.exports = {
     // Handle /start command
     bot.onText(/\/start/, (msg) => startCommand(msg, bot));
 
-    bot.onText(/\/products/, (msg) => productCommand(msg, bot));
+    bot.onText(/\/products/, (msg) => productsCommand(msg, bot));
     bot.onText(/\/cart/, (msg) => cartCommand(msg, bot));
     bot.onText(/\/profile/, (msg) => profileCommand(msg, bot));
-    bot.onText(/\/reviews/, (msg) => reviewCommand(msg, bot));
+    bot.onText(/\/reviews/, (msg) => reviewsCommand(msg, bot));
     bot.onText(/\/support/, (msg) => supportCommand(msg, bot));
     bot.onText(/\/pgpkey/, (msg) => pgpkeyCommand(msg, bot));
 
@@ -44,13 +44,13 @@ module.exports = {
       const text = msg.text;
 
       if (text == '🚀Products') {
-        productCommand(msg, bot);
+        productsCommand(msg, bot);
       } else if (text == '🛒Cart') {
         cartCommand(msg, bot);
       } else if (text == '👤My Profile') {
         profileCommand(msg, bot);
       } else if (text == '⭐️Reviews') {
-        reviewCommand(msg, bot);
+        reviewsCommand(msg, bot);
       } else if (text == '🛟Support') {
         supportCommand(msg, bot);
       } else if (text == '🔒PGP Key') {
