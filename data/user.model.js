@@ -8,16 +8,36 @@ const UserSchema = new mongoose.Schema({
       required: true,
       unique: true
     },
+    username: String,
+    firstName: String,
+    lastName: String,
+    state: {
+      type: String,
+      default: 'main_menu'
+    },
+    lastActive: {
+      type: Date,
+      default: Date.now
+    },
     currentProduct: {
       type: String,
       default: null
     },
-    firstName: String,
-    lastName: String,
-    username: String,
     createdAt: {
       type: Date,
       default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
+    },
+    orders: {
+      type: Array,
+      default: []
+    },
+    reviews: {
+      type: Array,
+      default: []
     }
 });
 

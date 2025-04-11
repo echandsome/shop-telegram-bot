@@ -1,0 +1,3 @@
+[2025-04-10 22:51:07] ERROR [node_modules\logform\printf.js:11:26] - Error processing data : Something went wrong in start command!
+[2025-04-10 22:51:51] ERROR [node_modules\logform\printf.js:11:26] - Error processing data : Something went wrong in start command!
+[2025-04-10 22:57:28] ERROR - [bot\commands.js:11] Something went wrong in start command!
