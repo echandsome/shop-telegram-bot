@@ -1,7 +1,20 @@
 const logger = require('../../utils/log');
-const { getCart, addToCart, removeFromCart } = require('../../services/cart');
-const { getPriceFromQuantity } = require('../../utils/utility');
+const { getCart, addToCart, removeFromCart, getCartSummary } = require('../../services/cart');
+const { getSessionValue } = require('../../utils/session');
 const { carts } = require('../keyboards');
+
+function getPriceFromQuantity(data) {
+    const priceMap = {
+      'add_1g': 80,
+      'add_2g': 155,
+      'add_3.5g': 219,
+      'add_7g': 405,
+      'add_14g': 790,
+      'add_28g': 1550,
+      'add_56g': 2800
+    };
+    return priceMap[data] || 0;
+}
 
 module.exports = async (msg, bot, type, text, query) => {
     const chatId = msg.chat.id;
@@ -19,7 +32,7 @@ module.exports = async (msg, bot, type, text, query) => {
                 cart.items.forEach((item, index) => {
                     subtotal += item.price;
                     remove_buttons.push([{
-                        text: `Remove ${index + 1}. ${item.product}       $${item.price}`,
+                        text: `Remove ${index + 1}. ${item.product} $${item.price}`,
                         callback_data: `remove_item_${index}`
                     }]);
                     cartText += `${item.product}        ${item.quantity} - $${item.price}\n`;
@@ -34,7 +47,7 @@ module.exports = async (msg, bot, type, text, query) => {
                 } else {
                     cartText += `Total: $${subtotal.toFixed(2)}`;
                 }
-                
+
                 await bot.editMessageText(cartText, {
                     chat_id: chatId,
                     message_id: loadingMsg.message_id,
@@ -64,7 +77,7 @@ module.exports = async (msg, bot, type, text, query) => {
                 const cartText = cart.items.map(item =>
                     `${item.product} - ${item.quantity} - $${item.price}`
                 ).join('\n');
-        
+
                 await bot.editMessageText(`Your Cart:\n${cartText}`, {
                     chat_id: chatId,
                     message_id: loadingMsg.message_id,
@@ -82,7 +95,7 @@ module.exports = async (msg, bot, type, text, query) => {
             const loadingMsg = await bot.sendMessage(chatId, 'Adding to cart...');
 
             await addToCart(chatId, {
-                product: text.split('_')[0], // Assuming the product ID is the first part of the text
+                product: getSessionValue(chatId, 'product'), // Assuming the product ID is the first part of the text
                 quantity: text.replace(/^[^_]+_/, ''), // Get everything after the first underscore
                 price: getPriceFromQuantity(text),
                 addedAt: new Date()
@@ -103,21 +116,30 @@ module.exports = async (msg, bot, type, text, query) => {
                 if (updatedCart && updatedCart.items && updatedCart.items.length > 0) {
                 totalPrice = 0;
                 const remove_buttons = [];
+                let subtotal = 0;
+                let cartText = `🛒 Your Cart:\n----------------------------------\n`;
 
-                const cartText = updatedCart.items.map((item, index) => {
-                    totalPrice += item.price;
-                    remove_buttons.push([{ text: `Remove ${index + 1}. ${item.product}       $${item.price}`, callback_data: `remove_item_${index}` }]);
-                    const quantityToShow = item.quantityDisplay || item.quantity;
-                    return `${item.product}        ${quantityToShow} - $${item.price}`;
-                }).join('\n');
+                updatedCart.items.forEach((item, index) => {
+                    subtotal += item.price;
+                    remove_buttons.push([{
+                        text: `Remove ${index + 1}. ${item.product} $${item.price}`,
+                        callback_data: `remove_item_${index}`
+                    }]);
+                    cartText += `${item.product}        ${item.quantity} - $${item.price}\n`;
+                });
+
+                cartText += `----------------------------------\n`;
+                cartText += `Subtotal: $${subtotal.toFixed(2)}\n`;
+
+                if (updatedCart.discountCode) {
+                    cartText += `Discount (${updatedCart.discountCode}): -$${updatedCart.discountAmount.toFixed(2)}\n`;
+                    cartText += `Final Total: $${updatedCart.finalPrice.toFixed(2)}`;
+                } else {
+                    cartText += `Total: $${subtotal.toFixed(2)}`;
+                }
 
                 if (messageId) {
-                    await bot.editMessageText(
-                        `You can proceed to 🛒Checkout or apply a 🤑discount or return to the store.
-                        ----------------------------------
-                        ${cartText}
-                        ----------------------------
-                        Total: $${totalPrice}`,
+                    await bot.editMessageText(cartText,
                         {
                             chat_id: chatId,
                             message_id: messageId,
@@ -128,12 +150,7 @@ module.exports = async (msg, bot, type, text, query) => {
                         }
                     );
                 } else {
-                    await bot.sendMessage(chatId,
-                        `You can proceed to 🛒Checkout or apply a 🤑discount or return to the store.
-                        ----------------------------------
-                        ${cartText}
-                        ----------------------------
-                        Total: $${totalPrice}`,
+                    await bot.sendMessage(chatId, cartText,
                         {
                             parse_mode: 'HTML',
                             reply_markup: {

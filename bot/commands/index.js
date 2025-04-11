@@ -9,7 +9,6 @@ const pgpkeyCommand = require('./pgpkey');
 const productsDetailCommand = require('./productsDetail');
 const checkoutCommand = require('./checkout');
 const paymentsCommand = require('./payments');
-const shippingCommand = require('./shipping');
 const menuCommand = require('./menu');
 
 module.exports = {
@@ -24,7 +23,6 @@ module.exports = {
     productsDetailCommand,
     checkoutCommand,
     paymentsCommand,
-    shippingCommand,
     menuCommand
   };
   

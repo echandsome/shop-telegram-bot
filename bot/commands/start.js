@@ -1,5 +1,5 @@
 const { menuOptions } = require('../keyboards');
-const productCommand = require('./categories');
+const categoryCommand = require('./categories');
 const { upsertUser } = require('../../services/user');
 const logger = require('../../utils/log');
 
@@ -16,9 +16,9 @@ module.exports = async (msg, bot) => {
                     keyboard: menuOptions,
                     resize_keyboard: true
                 }
-        });
+            });
 
-        await productCommand(msg, bot);
+            await categoryCommand(msg, bot);
         }
     } catch (e) {
         logger.error(e);

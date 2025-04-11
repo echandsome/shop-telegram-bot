@@ -40,6 +40,10 @@ const OrderSchema = new mongoose.Schema({
     paymentAddress: {
       type: String
     },
+    hasReview: {
+      type: Boolean,
+      default: false
+    },
     createdAt: {
       type: Date,
       default: Date.now

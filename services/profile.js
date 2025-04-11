@@ -52,6 +52,7 @@ const getUserOrders = async (userId) => {
  * @returns {Boolean} - Whether the user can leave a review
  */
 const canLeaveReview = (orderDate) => {
+  return true;
   if (!orderDate) return false;
   
   // Convert string date to Date object if needed

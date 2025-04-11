@@ -35,14 +35,6 @@ const UserSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     },
-    orders: {
-      type: Array,
-      default: []
-    },
-    reviews: {
-      type: Array,
-      default: []
-    }
 });
 
 module.exports = User = mongoose.model(MODEL.USER, UserSchema);

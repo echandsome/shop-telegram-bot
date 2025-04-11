@@ -40,9 +40,10 @@ const addToCart = async (userId, product) => {
           'items.product': product.product
         },
         {
-          $inc: { 'items.$.quantity': quantity }, // Increment numeric quantity
+          $inc: { 
+            'items.$.quantity': quantity,
+          'items.$.price': product.price, }, // Increment numeric quantity
           $set: {
-            'items.$.price': product.price,
             updatedAt: new Date()
           }
         }
@@ -62,9 +63,7 @@ const addToCart = async (userId, product) => {
 
     // Recalculate cart totals if a discount is applied
     const cart = await Cart.findOne({ userId });
-    if (cart && cart.discountCode) {
-      await updateCartTotals(userId);
-    }
+    await updateCartTotals(userId);
 
     return result;
   } catch (error) {
@@ -176,14 +175,22 @@ const clearCart = async (userId) => {
  */
 const removeFromCart = async (userId, productId) => {
   try {
-    // Remove the item
-    await Cart.updateOne(
-      { userId },
-      {
-        $pull: { items: { product: productId } },
-        $set: { updatedAt: new Date() }
-      }
-    );
+    const cart = await Cart.findOne({ userId: userId });
+
+    if (!cart || !cart.items || !cart.items[productId]) {
+      return false;
+    }
+
+    cart.items.splice(productId, 1);
+
+    if (cart.items.length === 0) {
+      return await Cart.deleteOne({ userId: userId });
+    } else {
+      return await Cart.updateOne(
+        { userId: userId },
+        { $set: { items: cart.items } }
+      );
+    }
 
     // Recalculate cart totals
     return await updateCartTotals(userId);

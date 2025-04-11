@@ -68,7 +68,7 @@ const baseSubproductOptions = [
   [{ text: "Back", callback_data: "back" }, { text: "Menu", callback_data: "menu" }]
 ];
 
-const products = {
+const products_detail = {
   "Corrosion": baseSubproductOptions,
   "Pyophorics": baseSubproductOptions,
   "Aerosols": baseSubproductOptions,
@@ -95,7 +95,7 @@ function buildKeyboard(extraOptions = []) {
   return allOptions.map(option => [option]); 
 }
 
-const products_detail = {
+const products = {
   "Hydroxide": buildKeyboard(hydroxideOnly),
   "Ammonia": buildKeyboard(),
   "Ethanol": buildKeyboard(),

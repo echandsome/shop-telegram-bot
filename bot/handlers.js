@@ -10,7 +10,6 @@ const {
   productsDetailCommand,
   checkoutCommand,
   paymentsCommand,
-  shippingCommand,
   menuCommand
 } = require('./commands');
 const { products_detail, products } = require('./keyboards');
@@ -52,11 +51,15 @@ module.exports = {
       } else if (text == 'discount') {
         checkoutCommand(message, bot, 'discount', text, query);
       } else if (text === '2-5 Business Days $0.00🚚') {
-        shippingCommand(chatId, text, bot);
+        checkoutCommand(message, bot, 'shipping', text, query);
       } else if (text.startsWith('payment_')) {
         paymentsCommand(chatId, text, bot, 'payment', query);
       } else if (text.startsWith('confirm_payment_')) {
         paymentsCommand(chatId, text, bot, 'confirm_payment', query);
+      } else if (text.startsWith('review_')) {
+        reviewsCommand(message, bot, 'start_review', text, query);
+      } else if (text.startsWith('rating_')) {
+        reviewsCommand(message, bot, 'submit_rating', text, query);
       } else if (text == 'back') {
         bot.deleteMessage(chatId, messageId);
       } else if (text == 'menu') {

@@ -51,6 +51,7 @@ module.exports = async (msg, bot) => {
             });
         }
 
+       
         // Add view all orders button if there are more than 5 orders
         if (orders && orders.length > 5) {
             profileButtons.push([{

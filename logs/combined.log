@@ -53,3 +53,12 @@
 [2025-04-11 12:57:54] ERROR - [bot\commands\profile.js:27] order is not defined
 [2025-04-11 12:58:16] ERROR - [bot\commands\profile.js:33] Cannot read properties of undefined (reading 'toFixed')
 [2025-04-11 12:59:25] ERROR - [bot\commands\profile.js:33] Cannot read properties of undefined (reading 'toFixed')
+[2025-04-11 14:43:51] ERROR - [bot\commands\cart.js:87] getPriceFromQuantity is not defined
+[2025-04-11 14:45:02] ERROR - [services\cart.js:21] Product not found: undefined
+[2025-04-11 15:33:21] ERROR - [node_modules\mongoose\lib\document.js:3351] Error creating order: Orders validation failed: items.0.category: Path `category` is required., items.0.productName: Path `productName` is required., items.0.productId: Path `productId` is required.
+[2025-04-11 16:02:04] ERROR - [bot\commands\productsDetail.js:8] setSessionValue is not defined
+[2025-04-11 16:20:29] ERROR - [bot\commands\productsDetail.js:21] image is not defined
+[2025-04-11 17:09:39] ERROR - [bot\commands\cart.js:121] subtotal is not defined
+[2025-04-11 17:09:56] ERROR - [bot\commands\cart.js:183] bot.answerquery is not a function
+[2025-04-11 17:11:28] ERROR - [bot\commands\cart.js:127] cartText is not defined
+[2025-04-11 17:14:21] ERROR - [bot\commands\cart.js:134] cart is not defined
