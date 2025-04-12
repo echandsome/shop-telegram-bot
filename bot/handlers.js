@@ -60,10 +60,24 @@ module.exports = {
         reviewsCommand(message, bot, 'start_review', text, query);
       } else if (text.startsWith('rating_')) {
         reviewsCommand(message, bot, 'submit_rating', text, query);
+      } else if (text.startsWith('reviews_page_')) {
+        // Handle review pagination
+        const page = text.replace('reviews_page_', '');
+        reviewsCommand(message, bot, 'page', page, query);
       } else if (text == 'back') {
         bot.deleteMessage(chatId, messageId);
       } else if (text == 'menu') {
         menuCommand(message, bot);
+      } else if (text == 'myprofile') {
+        profileCommand(message, bot);
+      } else if (text == 'products') {
+        categoriesCommand(message, bot);
+      } else if (text == 'reviews') {
+        reviewsCommand(message, bot);
+      } else if (text == 'support') {
+        supportCommand(message, bot);
+      } else if (text == 'pgpkey') {
+        pgpkeyCommand(message, bot);
       }
     });
 
@@ -92,6 +106,9 @@ module.exports = {
       } else if (user && user.state === 'in_support_chat' && msg.text) {
         // Handle messages in support chat
         supportCommand(msg, bot, 'message', text);
+      } else if (user && user.state === 'awaiting_review_comment' && msg.text) {
+        // Handle review comments
+        reviewsCommand(msg, bot, 'submit_comment', text);
       } else if (user && user.awaitingDiscount && msg.text) {
         checkoutCommand(msg, bot, 'input_discount', text);
       }

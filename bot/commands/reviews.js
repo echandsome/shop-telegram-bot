@@ -1,23 +1,30 @@
 const logger = require('../../utils/log');
-const { getUserOrders, canLeaveReview, addReview, getUserReviews } = require('../../services/profile');
+const { canLeaveReview, addReview, getAllReviews } = require('../../services/review');
 const { getOrderByNumber } = require('../../services/order');
+const { updateUserState } = require('../../services/user');
 
 module.exports = async (msg, bot, type, text) => {
     const chatId = msg.chat.id;
 
     try {
-        if (!type || type === 'view') {
-            // Get user reviews
-            const reviews = await getUserReviews(chatId);
+        if (!type || type === 'view' || type === 'page') {
+            // Get page number from text if it's a pagination request
+            let page = 0;
+            if (type === 'page' && text) {
+                page = parseInt(text) || 0;
+            }
+
+            // Get all reviews with pagination
+            const { reviews, pagination, summary } = await getAllReviews(page);
 
             if (!reviews || reviews.length === 0) {
                 await bot.sendMessage(chatId,
-                    "You haven't left any reviews yet. " +
+                    "There are no reviews in the system yet. " +
                     "After receiving an order, you can leave a review from your profile.",
                     {
                         reply_markup: {
                             inline_keyboard: [
-                                [{ text: "View Profile", callback_data: "profile" }],
+                                [{ text: "View Profile", callback_data: "myprofile" }],
                                 [{ text: "Back to Menu", callback_data: "menu" }]
                             ]
                         }
@@ -26,12 +33,20 @@ module.exports = async (msg, bot, type, text) => {
                 return;
             }
 
-            // Build message with all reviews
-            let reviewsText = `⭐ Your Reviews:\n\n`;
+            // Build message with reviews for current page
+            // Add summary at the top
+            const averageStars = '⭐'.repeat(Math.round(summary.averageRating));
+            let reviewsText = `📊 Review Summary:\n`;
+            reviewsText += `Average Rating: ${averageStars} (${summary.averageRating}/5)\n`;
+            reviewsText += `Total Reviews: ${summary.totalReviews}\n\n`;
+            reviewsText += `📝 All Reviews (${pagination.currentPage + 1}/${pagination.totalPages}):\n\n`;
 
             reviews.forEach((review, index) => {
                 const stars = '⭐'.repeat(review.rating);
+                const displayName = review.username || `User ${review.userId}`;
+
                 reviewsText += `${stars} (${review.rating}/5)\n`;
+                reviewsText += `By: ${displayName}\n`;
                 reviewsText += `Product: ${review.productId || 'Unknown'}\n`;
                 reviewsText += `Comment: ${review.comment || 'No comment'}\n`;
                 reviewsText += `Date: ${new Date(review.createdAt).toLocaleDateString()}\n`;
@@ -41,14 +56,41 @@ module.exports = async (msg, bot, type, text) => {
                 }
             });
 
-            // Send message with all reviews
+            // Create pagination buttons
+            const paginationButtons = [];
+
+            // Add navigation buttons if needed
+            if (pagination.hasPrevPage || pagination.hasNextPage) {
+                const navButtons = [];
+
+                if (pagination.hasPrevPage) {
+                    navButtons.push({
+                        text: "« Previous",
+                        callback_data: `reviews_page_${pagination.currentPage - 1}`
+                    });
+                }
+
+                if (pagination.hasNextPage) {
+                    navButtons.push({
+                        text: "Next »",
+                        callback_data: `reviews_page_${pagination.currentPage + 1}`
+                    });
+                }
+
+                paginationButtons.push(navButtons);
+            }
+
+            // Add back buttons
+            paginationButtons.push([
+                { text: "Back to Profile", callback_data: "myprofile" },
+                { text: "Back to Menu", callback_data: "menu" }
+            ]);
+
+            // Send message with reviews and pagination
             await bot.sendMessage(chatId, reviewsText, {
                 parse_mode: 'HTML',
                 reply_markup: {
-                    inline_keyboard: [
-                        [{ text: "Back to Profile", callback_data: "profile" }],
-                        [{ text: "Back to Menu", callback_data: "menu" }]
-                    ]
+                    inline_keyboard: paginationButtons
                 }
             });
         } else if (type === 'start_review') {
@@ -102,6 +144,17 @@ module.exports = async (msg, bot, type, text) => {
                 return;
             }
 
+            // Store the rating information in user state
+            await updateUserState(chatId, 'awaiting_review_comment');
+
+            // Save the review data temporarily
+            global.reviewData = global.reviewData || {};
+            global.reviewData[chatId] = {
+                orderNumber,
+                rating: parseInt(rating),
+                productId: order.items[0]?.product || "Unknown product"
+            };
+
             // Ask for review comment
             await bot.sendMessage(chatId,
                 `You've rated Order #${orderNumber} ${rating} stars.\n\n` +
@@ -112,27 +165,39 @@ module.exports = async (msg, bot, type, text) => {
                     }
                 }
             );
+        } else if (type === 'submit_comment') {
+            // Get the saved review data
+            const reviewData = global.reviewData && global.reviewData[chatId];
 
-            // Store the rating in user state (this would need to be implemented)
-            // For now, we'll just use a simple approach
+            if (!reviewData) {
+                await bot.sendMessage(chatId, "Sorry, we couldn't find your review information. Please try again.");
+                return;
+            }
+
+            // Add the comment to the review data
+            reviewData.comment = text === '/skip' ? 'No comment provided' : text;
+
+            // Add the review
+            await addReview(chatId, reviewData);
+
+            // Reset user state
+            await updateUserState(chatId, 'main_menu');
+
+            // Clean up temporary data
+            delete global.reviewData[chatId];
+
+            // Confirm to the user
             await bot.sendMessage(chatId,
-                `Your rating has been recorded. Thank you for your feedback!`,
+                `Your review has been submitted. Thank you for your feedback!`,
                 {
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: "Back to Profile", callback_data: "profile" }]
+                            [{ text: "Back to Profile", callback_data: "myprofile" }],
+                            [{ text: "Back to Menu", callback_data: "menu" }]
                         ]
                     }
                 }
             );
-
-            // Add the review
-            await addReview(chatId, {
-                orderNumber,
-                rating: parseInt(rating),
-                comment: "No comment provided",
-                productId: order.items[0]?.product || "Unknown product"
-            });
         }
     } catch (e) {
         logger.error(e);

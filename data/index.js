@@ -4,6 +4,7 @@ const Order = require('./order.model');
 const SupportMessage = require('./support-message.model');
 const Product = require('./product.model');
 const Category = require('./category.model');
+const Review = require('./review.model');
 
 module.exports = {
   User,
@@ -11,5 +12,6 @@ module.exports = {
   Order,
   SupportMessage,
   Product,
-  Category
+  Category,
+  Review
 };

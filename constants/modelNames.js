@@ -6,4 +6,5 @@ module.exports = {
     CART: 'Carts',
     SUPPORT_MESSAGE: 'SupportMessages',
     CATEGORY: 'Categories',
+    REVIEW: 'Reviews',
 };

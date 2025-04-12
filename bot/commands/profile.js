@@ -1,5 +1,6 @@
 const logger = require('../../utils/log');
-const { getUserProfile, getUserOrders, canLeaveReview } = require('../../services/profile');
+const { getUserProfile, getUserOrders } = require('../../services/profile');
+const { canLeaveReview, hasOrderBeenReviewed } = require('../../services/review');
 
 module.exports = async (msg, bot) => {
     const chatId = msg.chat.id;
@@ -40,18 +41,20 @@ module.exports = async (msg, bot) => {
         const profileButtons = [];
 
         if (orders && orders.length > 0) {
-            orders.forEach((order) => {
+            // Check each order to see if user can leave a review
+            for (const order of orders) {
                 // Check if user can leave a review for this order
-                if (canLeaveReview(order.createdAt) && !order.hasReview) {
+                const orderReviewed = await hasOrderBeenReviewed(order.orderNumber);
+                if (canLeaveReview(order.createdAt) && !orderReviewed) {
                     profileButtons.push([{
                         text: `Leave Review for Order #${order.orderNumber}`,
                         callback_data: `review_${order.orderNumber}`
                     }]);
                 }
-            });
+            }
         }
 
-       
+
         // Add view all orders button if there are more than 5 orders
         if (orders && orders.length > 5) {
             profileButtons.push([{
